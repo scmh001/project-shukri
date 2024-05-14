@@ -11,11 +11,10 @@
 * see how you stack compared to targeted template
 * feelings each day
 * contributing factors 
-- day before
-- diet
-- sleep
+* day before
+* diet
+* sleep
 * daily hydration tracker (enhanced chart)
-- glass that fills?
 * miles to km converter tab on chart
 
 
