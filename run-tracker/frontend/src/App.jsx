@@ -14,6 +14,18 @@ function App() {
     setRuns([...runs, newRun]);
   };
 
+  const handleDeleteRun = async (id) => {
+    const response = await fetch(`/api/runs/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      setRuns(runs.filter(run => run.id !== id));
+    } else {
+      console.error('Failed to delete run:', response.statusText);
+    }
+  };
+
   return (
     <div>
       <h1>Run Tracker</h1>
@@ -22,6 +34,7 @@ function App() {
         {runs.map(run => (
           <li key={run.id}>
             Distance: {run.distance} km, Time: {run.time}
+            <button onClick={() => handleDeleteRun(run.id)}>Delete</button>
           </li>
         ))}
       </ul>

@@ -20,5 +20,11 @@ def add_run():
     runs.append(new_run)
     return jsonify(new_run), 201
 
+@app.route('/api/runs/<int:run_id>', methods=['DELETE'])
+def delete_run(run_id):
+    global runs
+    runs = [run for run in runs if run['id'] != run_id]
+    return '', 204
+
 if __name__ == '__main__':
     app.run(debug=True)
