@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./AddRunForm.css"
 
 function AddRunForm({ onAddRun }) {
   const [distance, setDistance] = useState('');

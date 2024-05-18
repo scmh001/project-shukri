@@ -8,7 +8,7 @@ function AddRunToDayForm({ weekId, day, onAddRun }) {
     e.preventDefault();
     const newRun = { distance, time };
 
-    const response = await fetch(`/api/weekly_runs/${weekId}/${day}`, {
+    const response = await fetch(`/api/weekly_data/${weekId}/${day}/run`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
