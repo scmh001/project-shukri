@@ -4,26 +4,51 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-runs = [
-    {"id": 1, "distance": 5, "time": "30:00"},
-    {"id": 2, "distance": 10, "time": "60:00"}
+# Example data structure for weekly runs and goals
+weekly_data = [
+    {
+        "week_id": 1,
+        "runs": {
+            "Monday": [],
+            "Tuesday": [],
+            "Wednesday": [],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": []
+        },
+        "goals": {
+            "Monday": {"target_distance": 5, "target_time": "30:00"},
+            "Tuesday": {"target_distance": 10, "target_time": "60:00"},
+            # Add other days as needed
+        }
+    }
 ]
 
-@app.route('/api/runs', methods=['GET'])
-def get_runs():
-    return jsonify(runs)
+@app.route('/api/weekly_data', methods=['GET'])
+def get_weekly_data():
+    return jsonify(weekly_data)
 
-@app.route('/api/runs', methods=['POST'])
-def add_run():
-    new_run = request.json
-    new_run['id'] = len(runs) + 1
-    runs.append(new_run)
-    return jsonify(new_run), 201
+@app.route('/api/weekly_data', methods=['POST'])
+def add_weekly_goal():
+    new_weekly_goal = request.json
+    new_weekly_goal['week_id'] = len(weekly_data) + 1
+    weekly_data.append(new_weekly_goal)
+    return jsonify(new_weekly_goal), 201
 
-@app.route('/api/runs/<int:run_id>', methods=['DELETE'])
-def delete_run(run_id):
-    global runs
-    runs = [run for run in runs if run['id'] != run_id]
+@app.route('/api/weekly_data/<int:week_id>/<day>/run', methods=['POST'])
+def add_run_to_day(week_id, day):
+    run = request.json
+    for week in weekly_data:
+        if week['week_id'] == week_id:
+            week['runs'][day].append(run)
+            return jsonify(run), 201
+    return jsonify({"error": "Week not found"}), 404
+
+@app.route('/api/weekly_data/<int:week_id>', methods=['DELETE'])
+def delete_weekly_data(week_id):
+    global weekly_data
+    weekly_data = [week for week in weekly_data if week['week_id'] != week_id]
     return '', 204
 
 if __name__ == '__main__':

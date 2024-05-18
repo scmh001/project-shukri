@@ -1,40 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import AddRunForm from './AddRunForm';
+import AddWeeklyGoalForm from './AddWeeklyGoalForm';
+import AddRunToDayForm from './AddRunToDayForm';
 
 function App() {
-  const [runs, setRuns] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
 
   useEffect(() => {
-    fetch('/api/runs')
+    fetch('/api/weekly_data')
       .then(response => response.json())
-      .then(data => setRuns(data));
+      .then(data => setWeeklyData(data));
   }, []);
 
-  const handleAddRun = (newRun) => {
-    setRuns([...runs, newRun]);
+  const handleAddWeeklyGoal = (newWeeklyGoal) => {
+    setWeeklyData([...weeklyData, newWeeklyGoal]);
   };
 
-  const handleDeleteRun = async (id) => {
-    const response = await fetch(`/api/runs/${id}`, {
+  const handleAddRunToDay = (weekId, day, newRun) => {
+    setWeeklyData(weeklyData.map(week => {
+      if (week.week_id === weekId) {
+        return {
+          ...week,
+          runs: {
+            ...week.runs,
+            [day]: [...week.runs[day], newRun]
+          }
+        };
+      }
+      return week;
+    }));
+  };
+
+  const handleDeleteWeeklyData = async (week_id) => {
+    const response = await fetch(`/api/weekly_data/${week_id}`, {
       method: 'DELETE',
     });
 
     if (response.ok) {
-      setRuns(runs.filter(run => run.id !== id));
+      setWeeklyData(weeklyData.filter(data => data.week_id !== week_id));
     } else {
-      console.error('Failed to delete run:', response.statusText);
+      console.error('Failed to delete weekly data:', response.statusText);
     }
   };
 
   return (
     <div>
-      <h1>Run Tracker</h1>
-      <AddRunForm onAddRun={handleAddRun} />
+      <h1>Weekly Goal and Run Tracker</h1>
+      <AddWeeklyGoalForm onAddWeeklyGoal={handleAddWeeklyGoal} />
       <ul>
-        {runs.map(run => (
-          <li key={run.id}>
-            Distance: {run.distance} km, Time: {run.time}
-            <button onClick={() => handleDeleteRun(run.id)}>Delete</button>
+        {weeklyData.map(week => (
+          <li key={week.week_id}>
+            <h2>Week {week.week_id}</h2>
+            <ul>
+              {Object.keys(week.goals).map(day => (
+                <li key={day}>
+                  <h3>{day}</h3>
+                  <p>Target Distance: {week.goals[day].target_distance} km, Target Time: {week.goals[day].target_time}</p>
+                  <ul>
+                    {week.runs[day].map((run, index) => (
+                      <li key={index}>
+                        Distance: {run.distance} km, Time: {run.time}
+                      </li>
+                    ))}
+                  </ul>
+                  <AddRunToDayForm weekId={week.week_id} day={day} onAddRun={(day, run) => handleAddRunToDay(week.week_id, day, run)} />
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => handleDeleteWeeklyData(week.week_id)}>Delete</button>
           </li>
         ))}
       </ul>
