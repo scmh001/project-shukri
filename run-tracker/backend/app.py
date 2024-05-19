@@ -20,7 +20,7 @@ weekly_data = [
         "goals": {
             "Monday": {"target_distance": 5, "target_time": "30:00"},
             "Tuesday": {"target_distance": 10, "target_time": "60:00"},
-            # Add other days as needed
+            # Add other 
         }
     }
 ]
