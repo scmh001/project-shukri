@@ -1,5 +1,8 @@
 # Shukri Final Project - Run Tracker
 
+## Usage
+* cd into run-tracker/frontend and npm run dev in terminal
+* cd into run-tracker/backend and python app.py into terminal
 
 ## Deliverables (User Stories)
 
